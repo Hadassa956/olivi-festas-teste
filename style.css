@@ -1,4 +1,6 @@
-/* --- RESET GERAL --- */
+/* ==========================================================================
+   1. CONFIGURAÇÕES GERAIS (RESET)
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -9,15 +11,15 @@
 
 body {
     font-family: 'Poppins', sans-serif;
-    /* Unifiquei a fonte aqui */
     background-color: #fff;
     color: #112F52;
     overflow-x: hidden;
     font-weight: 300;
 }
 
-/* --- ESTILOS DA PÁGINA INICIAL (NAV, HERO, ETC) --- */
-/* Nota: Se a nav da home for diferente da nav2, mantive aqui, mas limpei duplicatas */
+/* ==========================================================================
+   2. NAVBAR DA HOME E ESTILOS GERAIS
+   ========================================================================== */
 nav {
     width: 100%;
     padding: 1rem 5%;
@@ -51,7 +53,7 @@ nav {
     color: #D9B00E;
 }
 
-/* Botões Gerais */
+/* --- Botões Gerais --- */
 .btn {
     padding: 0.5rem 1.5rem;
     border-radius: 30px;
@@ -70,7 +72,7 @@ nav {
     text-shadow: 0 0 10px #e2ca6c;
 }
 
-/* Hero Section */
+/* --- Hero Section --- */
 .hero {
     height: 75vh;
     background-color: #e9eaec;
@@ -99,9 +101,8 @@ nav {
     font-weight: 200;
 }
 
-/* Depoimentos e FAQ */
-.depoimentos h2,
-.faq h2 {
+/* --- Depoimentos e FAQ --- */
+.depoimentos h2, .faq h2 {
     font-size: 2rem;
     margin-bottom: 2rem;
     color: #112F52;
@@ -151,9 +152,7 @@ nav {
     text-align: center;
 }
 
-.faq h2 {
-    color: #D9B00E;
-}
+.faq h2 { color: #D9B00E; }
 
 .faq-container {
     max-width: 800px;
@@ -178,16 +177,10 @@ summary {
     align-items: center;
 }
 
-summary::after {
-    content: '+';
-    font-size: 1.5rem;
-}
+summary::after { content: '+'; font-size: 1.5rem; }
+details[open] summary::after { content: '-'; }
 
-details[open] summary::after {
-    content: '-';
-}
-
-/* Footer */
+/* --- Footer --- */
 footer {
     grid-area: footer;
     background: #0a1c33;
@@ -204,25 +197,18 @@ footer {
     gap: 1.5rem;
 }
 
-.socials a {
-    color: #2f5177;
-    text-decoration: none;
-}
-
-.socials i:hover {
-    color: #D9B00E;
-    transition: 0.3s;
-}
+.socials a { color: #2f5177; text-decoration: none; }
+.socials i:hover { color: #D9B00E; transition: 0.3s; }
 
 
-/* ================================================== 
-   PÁGINA 2 (SHOP) - ESTRUTURA E LAYOUT 
-   ================================================== */
+/* ==========================================================================
+   3. PÁGINA DE PRODUTOS (SHOP)
+   ========================================================================== */
 
+/* Layout Grid (PC) */
 .body2 {
     min-height: 100vh;
     display: grid;
-    /* Sidebar (280px) + Conteúdo (1fr) */
     grid-template-columns: 280px 1fr;
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
@@ -237,32 +223,29 @@ footer {
     grid-template-columns: 0px 1fr;
 }
 
-/* --- NAV BAR DA LOJA (CORRIGIDA) --- */
+/* --- NAV BAR DA LOJA --- */
 .nav2 {
     grid-area: navbar;
     background-color: #0a1c33;
     height: 70px;
-    /* Altura fixa para alinhar */
     padding: 0 20px;
-    /* Espaço igual nas laterais */
     position: sticky;
     top: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    /* LOGO NA ESQUERDA, BUSCA NA DIREITA */
+    justify-content: space-between; /* Logo na ponta, Busca na outra */
     z-index: 2100;
-    /* Acima da sidebar */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    gap: 20px;
 }
 
 /* Logo da Loja */
 .logo-produtos {
-    /* Removi as margens gigantes. O flexbox cuida da posição */
-    width: auto;
+    margin: 0;
     height: 50px;
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .logo-img {
@@ -279,8 +262,9 @@ footer {
     border-radius: 20px;
     padding: 5px 15px;
     border: 1px solid rgba(217, 176, 14, 0.3);
-    width: 300px;
-    /* Tamanho da barra */
+    width: auto;      
+    flex-grow: 1;     
+    max-width: 400px;
 }
 
 .search-box i {
@@ -297,24 +281,20 @@ footer {
     width: 100%;
     font-size: 0.9rem;
 }
+.search-box input::placeholder { color: rgba(255, 255, 255, 0.7); }
 
-.search-box input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-/* --- SIDEBAR --- */
+/* --- SIDEBAR (Barra Lateral) --- */
 #sidebar {
     grid-area: sidebar;
     background-color: #133d75;
     color: antiquewhite;
     height: calc(100vh - 70px);
-    /* Ajuste conforme altura da nav */
     position: sticky;
     top: 70px;
     overflow-y: auto;
     overflow-x: hidden;
     white-space: nowrap;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-right: 1px solid rgba(255,255,255,0.1);
     transition: 0.4s;
     z-index: 900;
 }
@@ -324,14 +304,11 @@ footer {
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.cat {
-    padding: 0;
-    font-size: 1.1rem;
-}
+.cat { padding: 0; font-size: 1.1rem; }
 
 #btn-toggle-sidebar {
     background: none;
@@ -343,39 +320,15 @@ footer {
     padding: 2px 8px;
     transition: 0.3s;
 }
+#btn-toggle-sidebar:hover { background: #D9B00E; color: #133d75; }
 
-#btn-toggle-sidebar:hover {
-    background: #D9B00E;
-    color: #133d75;
-}
-
-/* Botão Flutuante (Filtros) */
+/* Botão Flutuante "Filtros" (REGRA GERAL: ESCONDIDO NO PC) */
 #btn-abrir-sidebar {
-    position: fixed;
-    left: 0;
-    top: 100px;
-    background: #D9B00E;
-    color: #112F52;
-    border: none;
-    padding: 10px 15px 10px 10px;
-    border-radius: 0 20px 20px 0;
-    cursor: pointer;
-    font-weight: bold;
-    z-index: 1000;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-    transition: 0.3s;
-}
-
-#btn-abrir-sidebar:hover {
-    padding-left: 20px;
+    display: none; /* PADRÃO: NÃO APARECE */
 }
 
 /* Lista de Categorias */
-.menu-categorias ul {
-    list-style: none;
-    padding: 10px;
-}
-
+.menu-categorias ul { list-style: none; padding: 10px; }
 .menu-categorias li {
     padding: 12px 15px;
     cursor: pointer;
@@ -385,22 +338,11 @@ footer {
     display: flex;
     justify-content: space-between;
 }
-
-.menu-categorias li:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #D9B00E;
-}
-
-.menu-categorias li.ativo {
-    background-color: #D9B00E;
-    color: #112F52;
-    font-weight: bold;
-}
+.menu-categorias li:hover { background-color: rgba(255,255,255,0.1); color: #D9B00E; }
+.menu-categorias li.ativo { background-color: #D9B00E; color: #112F52; font-weight: bold; }
 
 /* --- CONTEÚDO PRINCIPAL (Main) --- */
-main {
-    padding-top: 30px;
-}
+main { padding-top: 30px; }
 
 .secao-produtos {
     display: flex;
@@ -417,23 +359,16 @@ main {
     max-width: 1200px;
     margin: 0 auto;
     grid-template-columns: 1fr;
-    /* Mobile padrão */
 }
 
-/* Responsividade da Grade */
 @media (min-width: 600px) {
-    #grade-produtos {
-        grid-template-columns: repeat(2, 1fr);
-    }
+    #grade-produtos { grid-template-columns: repeat(2, 1fr); }
 }
-
 @media (min-width: 1024px) {
-    #grade-produtos {
-        grid-template-columns: repeat(4, 1fr);
-    }
+    #grade-produtos { grid-template-columns: repeat(4, 1fr); }
 }
 
-/* Cards de Produto */
+/* --- CARDS DE PRODUTO --- */
 .card-produto {
     background: #fff;
     border: 1px solid #e0e0e0;
@@ -447,19 +382,21 @@ main {
     justify-content: space-between;
     height: 100%;
 }
-
 .card-produto:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     border-color: #D9B00E;
 }
 
+/* CORREÇÃO DAS IMAGENS: CONTAIN (Ver inteira) */
 .card-produto img {
     width: 100%;
     height: 200px;
-    object-fit: cover;
+    object-fit: contain; /* Ajusta a imagem inteira dentro do quadrado */
+    background-color: #fff; /* Fundo branco caso sobre espaço */
     border-radius: 5px;
     margin-bottom: 10px;
+    padding: 5px;
 }
 
 .card-produto h3 {
@@ -484,11 +421,7 @@ main {
     width: 100%;
     transition: 0.3s;
 }
-
-.btn-orcamento:hover {
-    background-color: #e6a13b;
-    box-shadow: 0 0 10px #e2ca6c;
-}
+.btn-orcamento:hover { background-color: #e6a13b; box-shadow: 0 0 10px #e2ca6c; }
 
 /* Paginação */
 .paginacao-bottom {
@@ -501,7 +434,6 @@ main {
     padding: 0 20px;
     flex-wrap: wrap;
 }
-
 .paginacao-bottom button {
     background-color: #fff;
     border: 1px solid #112F52;
@@ -514,13 +446,7 @@ main {
     transition: 0.3s;
     min-width: 35px;
 }
-
-.paginacao-bottom button:hover {
-    background-color: #f0f0f0;
-    border-color: #D9B00E;
-    color: #D9B00E;
-}
-
+.paginacao-bottom button:hover { background-color: #f0f0f0; border-color: #D9B00E; color: #D9B00E; }
 .paginacao-bottom button.ativa {
     background-color: #112F52;
     color: #D9B00E;
@@ -542,54 +468,39 @@ main {
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     z-index: 2200;
-    /* Tem que ser bem alto */
     transition: 0.3s;
-    display: none;
+    display: none; /* JS controla isso */
     align-items: center;
     gap: 10px;
 }
-
-.carrinho-flutuante:hover {
-    background-color: #1ebc57;
-    transform: scale(1.05);
-}
+.carrinho-flutuante:hover { background-color: #1ebc57; transform: scale(1.05); }
 
 
-/* ================================================== 
-   MOBILE - MEDIA QUERIES (TUDO DO CELULAR AQUI)
-   ================================================== */
-/* --- BOTÃO FLUTUANTE DE FILTRO (Padrão PC: Escondido) --- */
-#btn-abrir-sidebar {
-    display: none;
-    /* No PC ele não aparece, pois a barra já está lá */
-}
-
+/* ==========================================================================
+   4. VERSÃO MOBILE (CELULAR - TELA < 800px)
+   ========================================================================== */
 @media (max-width: 800px) {
-
+    
     /* 1. Reset do Grid */
     .body2 {
         display: block;
-        padding-top: 70px;
-        /* Compensa a Nav fixa */
+        padding-top: 0; /* CORREÇÃO: Remove buraco branco no topo */
     }
 
-    /* 2. Nav Mobile */
+    /* 2. Nav Mobile (Ajustada) */
     .nav2 {
-        padding: 0 15px;
-        /* Menos borda no celular */
+        padding: 0 10px;
         gap: 10px;
     }
-
+    .logo-produtos img {
+        height: 40px; 
+    }
     .search-box {
-        width: 180px;
-        /* Diminui a busca para caber no celular */
+        flex-grow: 1;
+        width: auto;
         padding: 5px 10px;
     }
-
-    .search-box input::placeholder {
-        font-size: 0.8rem;
-        /* Letra menor */
-    }
+    .search-box input::placeholder { font-size: 0.8rem; }
 
     /* 3. Sidebar Gaveta */
     #sidebar {
@@ -601,59 +512,43 @@ main {
         max-width: 320px;
         z-index: 2500;
         transform: translateX(-100%);
-        /* Escondida */
         border-right: none;
         padding-top: 20px;
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+        box-shadow: 5px 0 15px rgba(0,0,0,0.5);
     }
+    .body2.mobile-menu-aberto #sidebar { transform: translateX(0); }
 
-    .body2.mobile-menu-aberto #sidebar {
-        transform: translateX(0);
-        /* Aberta */
-    }
-
-    .sidebar-header {
-        padding: 0 20px 20px 20px;
-    }
-
+    .sidebar-header { padding: 0 20px 20px 20px; }
     #btn-toggle-sidebar {
         font-size: 1.5rem;
         padding: 5px 15px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* 4. Botão Filtro Flutuante */
-    /* FORÇA O BOTÃO A APARECER NO CELULAR */
-    /* 4. O BOTÃO FLUTUANTE "FILTROS" (Versão Compacta) */
+    /* 4. BOTÃO FILTRO FLUTUANTE (SÓ NO CELULAR) */
     #btn-abrir-sidebar {
-        display: flex !important;
+        display: flex !important; /* FORÇA aparecer aqui */
         align-items: center;
         gap: 8px;
-        /* Menos espaço entre ícone e texto */
-
+        
         position: fixed;
         bottom: 15px;
-        /* Mais próximo da borda */
         left: 15px;
         top: auto;
-
+        
         background-color: #D9B00E;
         color: #112F52;
-
-        /* AQUI QUE DIMINUI O TAMANHO */
-        padding: 8px 16px;
-        /* Borda mais fina */
+        padding: 8px 16px; /* Tamanho menor e elegante */
         font-size: 0.85rem;
-        /* Letra menor */
-        height: auto;
-        width: fit-content;
-        /* Ocupa só o espaço do texto */
-
+        
         border-radius: 30px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        border: none;
+        font-weight: bold;
+        z-index: 9999; /* Garante clique */
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        border: 2px solid #fff;
     }
+    #btn-abrir-sidebar::before { content: '\2630'; font-size: 1rem; }
 
     /* 5. Backdrop Escuro */
     .backdrop-menu {
@@ -662,13 +557,21 @@ main {
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0,0,0,0.6);
         z-index: 2400;
         display: none;
         backdrop-filter: blur(2px);
     }
+    .body2.mobile-menu-aberto .backdrop-menu { display: block; }
+}
 
-    .body2.mobile-menu-aberto .backdrop-menu {
-        display: block;
+/* ==========================================================================
+   5. TRAVA DE SEGURANÇA (GARANTIA PC)
+   ========================================================================== */
+@media (min-width: 801px) {
+    #btn-abrir-sidebar {
+        display: none !important; /* Esconde do PC na marra */
+        opacity: 0 !important;
+        pointer-events: none;
     }
 }

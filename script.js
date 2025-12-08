@@ -15,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Verifica se a lista de produtos carregou
     if (typeof listaProdutos !== 'undefined') {
         produtosParaExibir = listaProdutos;
-        
+
         // Gera as categorias e produtos
-        if(typeof gerarCategorias === 'function') gerarCategorias();
+        if (typeof gerarCategorias === 'function') gerarCategorias();
         renderizarLoja(paginaAtual);
     } else {
         console.error("ERRO: O arquivo produtos.js não foi carregado corretamente.");
@@ -39,11 +39,11 @@ function renderizarLoja(pagina) {
 
     // Cálculos da paginação
     const totalPaginas = Math.ceil(produtosParaExibir.length / itensPorPagina);
-    
+
     // Proteção para não quebrar se a página não existir
     if (pagina < 1) pagina = 1;
     if (pagina > totalPaginas && totalPaginas > 0) pagina = totalPaginas;
-    
+
     paginaAtual = pagina;
     container.innerHTML = ''; // Limpa a tela
 
@@ -80,7 +80,7 @@ function renderizarLoja(pagina) {
     }
 
     // Desenha os botões de paginação (1, 2, 3...)
-    if(containerPaginacao) atualizarBotoesPaginacao(totalPaginas);
+    if (containerPaginacao) atualizarBotoesPaginacao(totalPaginas);
 
     // Rola para o topo suavemente
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -122,10 +122,10 @@ function atualizarBotoesPaginacao(totalPaginas) {
    ========================================================================== */
 function adicionarAoOrcamento(nome) {
     carrinho.push(nome);
-    
+
     // Salva no navegador para não perder se atualizar a página
     localStorage.setItem('carrinho_olivi', JSON.stringify(carrinho));
-    
+
     // Feedback visual rápido
     alert(`✅ "${nome}" adicionado!`);
     atualizarVisualCarrinho();
@@ -138,14 +138,14 @@ function atualizarVisualCarrinho() {
     if (carrinho.length > 0) {
         // Mostra o botão (Flex para PC, ou a regra do CSS decide)
         // O CSS com !important no mobile vai garantir que apareça lá
-        if(window.innerWidth > 800) {
-             btnFloat.style.display = 'flex';
+        if (window.innerWidth > 800) {
+            btnFloat.style.display = 'flex';
         } else {
-             // No mobile, o CSS já trata, mas garantimos aqui
-             btnFloat.style.display = 'flex';
+            // No mobile, o CSS já trata, mas garantimos aqui
+            btnFloat.style.display = 'flex';
         }
-        
-        if(contador) contador.innerText = carrinho.length;
+
+        if (contador) contador.innerText = carrinho.length;
     } else {
         btnFloat.style.display = 'none';
     }
@@ -160,11 +160,11 @@ function finalizarNoWhatsapp() {
     }
 
     // --- CONFIGURE SEU NÚMERO AQUI (Apenas números, código país + ddd + numero) ---
-    const telefone = "5511999999999"; 
+    const telefone = "5511999999999";
     // -----------------------------------------------------------------------------
 
     let texto = "*Olá! Gostaria de um orçamento para os seguintes itens:*\n\n";
-    
+
     // Agrupa itens repetidos (ex: Cadeira x2)
     const contagem = {};
     carrinho.forEach(item => {
@@ -188,9 +188,9 @@ function finalizarNoWhatsapp() {
    ========================================================================== */
 function pesquisarProdutos() {
     const termo = document.getElementById('search').value.toLowerCase();
-    
-    produtosParaExibir = listaProdutos.filter(produto => 
-        produto.nome.toLowerCase().includes(termo) || 
+
+    produtosParaExibir = listaProdutos.filter(produto =>
+        produto.nome.toLowerCase().includes(termo) ||
         (produto.categoria && produto.categoria.toLowerCase().includes(termo))
     );
 
@@ -246,14 +246,18 @@ function toggleSidebar() {
     const isMobile = window.innerWidth < 800;
 
     if (isMobile) {
+        // No celular, usa a classe que criamos para o efeito gaveta
         body.classList.toggle('mobile-menu-aberto');
+
+        // Simples: Se abriu, esconde o botão. Se fechou, mostra.
         if (body.classList.contains('mobile-menu-aberto')) {
             btnAbrir.style.display = 'none';
         } else {
-            // Só mostra o botão se tiver fechado
-            btnAbrir.style.display = 'flex';
+            // Usa setAttribute para garantir prioridade sobre CSS inline
+            btnAbrir.setAttribute('style', 'display: flex !important');
         }
     } else {
+        // No PC
         body.classList.toggle('sidebar-fechada');
     }
 }
