@@ -23,6 +23,61 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
+   MENU MOBILE / FILTROS (SIMPLIFICADO)
+   ========================================================================== */
+function toggleSidebar() {
+    console.log("Botão de filtro clicado!"); // Para teste
+    const body = document.querySelector('.body2');
+    
+    // Troca a classe no body
+    body.classList.toggle('mobile-menu-aberto');
+    
+    // No PC, também usa a lógica de sidebar fechada
+    body.classList.toggle('sidebar-fechada');
+}
+
+// Lógica de Filtros
+function gerarCategorias() {
+    const listaUl = document.getElementById('lista-categorias');
+    if (!listaUl) return;
+
+    const categoriasSet = new Set(listaProdutos.map(p => p.categoria || 'Outros'));
+    const categoriasUnicas = Array.from(categoriasSet).sort();
+
+    listaUl.innerHTML = `<li onclick="filtrarPorCategoria('todas')" class="ativo">Todos os Produtos</li>`;
+
+    categoriasUnicas.forEach(cat => {
+        const qtd = listaProdutos.filter(p => (p.categoria || 'Outros') === cat).length;
+        listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
+    });
+}
+
+function filtrarPorCategoria(categoria) {
+    const itens = document.querySelectorAll('#lista-categorias li');
+    itens.forEach(li => {
+        li.classList.remove('ativo');
+        if (li.innerText.includes(categoria) || (categoria === 'todas' && li.innerText.includes('Todos'))) {
+            li.classList.add('ativo');
+        }
+    });
+
+    if (categoria === 'todas') {
+        produtosParaExibir = listaProdutos;
+    } else {
+        produtosParaExibir = listaProdutos.filter(p => (p.categoria || 'Outros') === categoria);
+    }
+
+    paginaAtual = 1;
+    renderizarLoja(1);
+
+    // Fecha o menu automaticamente no celular ao clicar em uma categoria
+    if (window.innerWidth < 800) {
+        const body = document.querySelector('.body2');
+        body.classList.remove('mobile-menu-aberto');
+    }
+}
+
+/* ==========================================================================
    LÓGICA DA LOJA (Mostrar Produtos)
    ========================================================================== */
 function renderizarLoja(pagina) {
@@ -100,60 +155,6 @@ function atualizarBotoesPaginacao(totalPaginas) {
     }
 }
 
-/* ==========================================================================
-   MENU MOBILE / FILTROS (SIMPLIFICADO)
-   ========================================================================== */
-function toggleSidebar() {
-    console.log("Botão de filtro clicado!"); // Para teste
-    const body = document.querySelector('.body2');
-    
-    // Troca a classe no body
-    body.classList.toggle('mobile-menu-aberto');
-    
-    // No PC, também usa a lógica de sidebar fechada
-    body.classList.toggle('sidebar-fechada');
-}
-
-// Lógica de Filtros
-function gerarCategorias() {
-    const listaUl = document.getElementById('lista-categorias');
-    if (!listaUl) return;
-
-    const categoriasSet = new Set(listaProdutos.map(p => p.categoria || 'Outros'));
-    const categoriasUnicas = Array.from(categoriasSet).sort();
-
-    listaUl.innerHTML = `<li onclick="filtrarPorCategoria('todas')" class="ativo">Todos os Produtos</li>`;
-
-    categoriasUnicas.forEach(cat => {
-        const qtd = listaProdutos.filter(p => (p.categoria || 'Outros') === cat).length;
-        listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
-    });
-}
-
-function filtrarPorCategoria(categoria) {
-    const itens = document.querySelectorAll('#lista-categorias li');
-    itens.forEach(li => {
-        li.classList.remove('ativo');
-        if (li.innerText.includes(categoria) || (categoria === 'todas' && li.innerText.includes('Todos'))) {
-            li.classList.add('ativo');
-        }
-    });
-
-    if (categoria === 'todas') {
-        produtosParaExibir = listaProdutos;
-    } else {
-        produtosParaExibir = listaProdutos.filter(p => (p.categoria || 'Outros') === categoria);
-    }
-
-    paginaAtual = 1;
-    renderizarLoja(1);
-
-    // Fecha o menu automaticamente no celular ao clicar em uma categoria
-    if (window.innerWidth < 800) {
-        const body = document.querySelector('.body2');
-        body.classList.remove('mobile-menu-aberto');
-    }
-}
 
 /* ==========================================================================
    CARRINHO E WHATSAPP (CORRIGIDO)
@@ -231,3 +232,4 @@ function pesquisarProdutos() {
     paginaAtual = 1;
     renderizarLoja(1);
 }
+
