@@ -133,7 +133,7 @@ function finalizarNoWhatsapp() {
     }
     texto += "\n*Aguardo retorno!*";
 
-    const link = `https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`;
+    const link = `https://wa.me/${5533991781075}?text=${encodeURIComponent(texto)}`;
     
     // 1. Abre o WhatsApp
     window.open(link, '_blank');
@@ -201,4 +201,5 @@ function gerarCategorias() {
         listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
     });
 }
+
 
