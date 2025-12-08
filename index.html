@@ -153,14 +153,32 @@
 
         breakpoints:{
             800:{
-             depth: 190 
-            }
-        });
+                var swiper = new Swiper(".mySwiper", {
+                    effect: "coverflow",
+                    grabCursor: true,
+                    centeredSlides: true,
+                    loop: true,
+                    slidesPerView: "auto",
+                    coverflowEffect: {
+                        rotate: 0,
+                        stretch: 0,
+                        depth: 100,
+                        modifier: 1,
+                        slideShadows: true,
+                },
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+               }
+             
+                    
+                
     </script>
 </body>
 
 
 
 </html>
+
 
 
