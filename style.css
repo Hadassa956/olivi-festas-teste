@@ -581,7 +581,7 @@ main { padding-top: 30px; }
    ========================================================================== */
 
 .collection{
-    height: 100vh;
+    height: 80vh;
     background-color: #1e232e;
     display: flex;
     justify-content: center;
@@ -604,3 +604,4 @@ main { padding-top: 30px; }
     border-bottom-left-radius: .6rem;
     border-bottom-right-radius: .6rem;
 }
+
