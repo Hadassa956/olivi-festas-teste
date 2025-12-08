@@ -153,7 +153,7 @@ function finalizarNoWhatsapp() {
         return;
     }
 
-    const telefone = "5511999999999"; // SEU NÚMERO AQUI
+    const telefone = "5533991781075"; // SEU NÚMERO AQUI
     let texto = "*Olá! Gostaria de um orçamento:*\n\n";
     const contagem = {};
     
@@ -166,7 +166,7 @@ function finalizarNoWhatsapp() {
     }
     texto += "\n*Aguardo retorno!*";
 
-    const link = `https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`;
+    const link = `https://wa.me/${5533991781075}?text=${encodeURIComponent(texto)}`;
 
     // LIMPEZA
     carrinho = []; 
@@ -178,3 +178,4 @@ function finalizarNoWhatsapp() {
 }
 
 /* =================
+
