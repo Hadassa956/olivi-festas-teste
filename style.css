@@ -579,7 +579,6 @@ main { padding-top: 30px; }
 /* ==========================================================================
    ESTILOS DO CARROSSEL (SWIPER)
    ========================================================================== */
-
 .collection{
     height: 80vh;
     background-color: #1e232e;
@@ -591,10 +590,10 @@ main { padding-top: 30px; }
     height: 28rem;
     width: 25rem;
     background-color: #1b1f2a;
-    border: .2rem solid rgba(255,255,255,.1);
+    border: .1rem solid rgba(255,255,255,.1);
     border-radius: .7rem;
-    border-bottom: .4rem solid #D9B00E;
-    border-top: .4rem solid #D9B00E;
+    border-top: .4rem solid #e6a13b;
+    border-bottom: .4rem solid #4a9159;
     overflow: hidden;
     padding: .2rem;
 }
@@ -604,5 +603,6 @@ main { padding-top: 30px; }
     border-bottom-left-radius: .6rem;
     border-bottom-right-radius: .6rem;
 }
+
 
 
