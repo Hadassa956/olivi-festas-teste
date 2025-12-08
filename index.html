@@ -131,7 +131,7 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="script.js"></script>
 
-    <!--<script>
+    <script>
         var swiper = new Swiper(".mySwiper", {
             effect: "coverflow",
             grabCursor: true,
@@ -150,44 +150,31 @@
                 delay: 3000,
                 disableOnInteraction: false,
             }
-        };
-    -->
-    <script>
-        var swiper = new Swiper(".mySwiper", {
-            effect: "coverflow",
-            grabCursor: true,
-            centeredSlides: true,
-            loop: true,
-            slidesPerView: "auto", /* Isso permite que o CSS controle a largura */
-            
-            /* Configuração Padrão (MOBILE) */
-            coverflowEffect: {
-                rotate: 0,      /* Sem rotação estranha */
-                stretch: 0,
-                depth: 100,     /* Profundidade 3D */
-                modifier: 2,    /* Intensidade do efeito */
-                slideShadows: true,
-            },
-            
-            autoplay: {
-                delay: 2500,
-                disableOnInteraction: false,
-            },
 
-            /* Configuração para TELAS MAIORES (PC/Tablet) */
-            breakpoints: {
-                768: {
-                    coverflowEffect: {
-                        depth: 150,   /* Mais profundidade no PC */
-                        modifier: 1,  /* Menos distorção no PC */
-                    }
-                }
-            }
-        });
-    </script>
+            breakpoints{ :
+
+            800 {:
+                effect: "coverflow",
+                grabCursor: true,
+                centeredSlides: true,
+                loop: true,
+                slidesPerView: "auto",
+                coverflowEffect: {
+                    rotate: 0,
+                    stretch: 0,
+                    depth: 150,
+                    modifier: 1,
+                    slideShadows: true,
+                },
+                autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+            };
+    
 </body>
 </html>        
         
+
 
 
 
