@@ -1,58 +1,64 @@
 /* ==========================================================================
-   1. VARIÁVEIS GLOBAIS (O navegador lê isso primeiro)
+   1. INICIALIZAÇÃO SEGURA (BLINDADA CONTRA ERROS)
    ========================================================================== */
 const itensPorPagina = 12; 
 let paginaAtual = 1;
-let carrinho = JSON.parse(localStorage.getItem('carrinho_olivi')) || [];
 let produtosParaExibir = [];
+let carrinho = [];
+
+// Tenta recuperar o carrinho. Se der erro (lixo na memória), cria um novo vazio.
+try {
+    const salvo = localStorage.getItem('carrinho_olivi');
+    carrinho = salvo ? JSON.parse(salvo) : [];
+} catch (e) {
+    console.error("Erro ao ler carrinho, resetando:", e);
+    carrinho = [];
+    localStorage.removeItem('carrinho_olivi');
+}
 
 /* ==========================================================================
-   2. FUNÇÃO DE MENU MOBILE (TOGGLE SIDEBAR)
-   Colocamos aqui no topo para garantir que o HTML enxergue ela
+   2. FUNÇÃO MENU MOBILE (Topo para garantir acesso)
    ========================================================================== */
 function toggleSidebar() {
-    console.log("--> Função toggleSidebar foi chamada!"); // Teste de clique
-
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.querySelector('.backdrop-menu');
     const btn = document.getElementById('btn-abrir-sidebar');
 
-    if (!sidebar) {
-        console.error("ERRO: Não achei o elemento #sidebar");
-        return;
-    }
+    if (!sidebar) return;
 
-    // Verifica se está fechada (ou sem estilo definido) e ABRE
+    // Lógica simples: Se não tem estilo ou está -100%, ABRE. Senão, FECHA.
     if (sidebar.style.transform === '' || sidebar.style.transform === 'translateX(-100%)') {
-        sidebar.style.transform = 'translateX(0)'; // Abre
-        if (backdrop) backdrop.style.display = 'block';
-        if (btn) btn.style.display = 'none'; // Esconde botão
+        sidebar.style.transform = 'translateX(0)';
+        if(backdrop) backdrop.style.display = 'block';
+        if(btn) btn.style.display = 'none';
     } else {
-        sidebar.style.transform = 'translateX(-100%)'; // Fecha
-        if (backdrop) backdrop.style.display = 'none';
-        if (btn) btn.style.display = 'flex'; // Mostra botão
+        sidebar.style.transform = 'translateX(-100%)';
+        if(backdrop) backdrop.style.display = 'none';
+        if(btn) btn.style.display = 'flex';
     }
 }
 
 /* ==========================================================================
-   3. INICIALIZAÇÃO (Só roda quando a tela termina de carregar)
+   3. CARREGAMENTO DA PÁGINA
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega produtos
-    if (typeof listaProdutos !== 'undefined') {
+    // Verifica se o arquivo de produtos carregou
+    if (typeof listaProdutos !== 'undefined' && Array.isArray(listaProdutos)) {
         produtosParaExibir = listaProdutos;
-        if(typeof gerarCategorias === 'function') gerarCategorias();
+        
+        // Inicia tudo
+        gerarCategorias();
         renderizarLoja(paginaAtual);
+        atualizarVisualCarrinho();
     } else {
-        console.error("ERRO CRÍTICO: listaProdutos não encontrada.");
+        // Se deu erro, avisa na tela para você saber
+        document.getElementById('grade-produtos').innerHTML = 
+            '<h3 style="padding:20px; color:red">Erro: O arquivo produtos.js não foi carregado. Verifique se o nome está correto no HTML.</h3>';
     }
-    
-    // Atualiza o carrinho
-    atualizarVisualCarrinho();
 });
 
 /* ==========================================================================
-   4. FUNÇÕES DA LOJA E RENDERIZAÇÃO
+   4. RENDERIZAÇÃO DA LOJA
    ========================================================================== */
 function renderizarLoja(pagina) {
     const container = document.getElementById('grade-produtos');
@@ -60,6 +66,7 @@ function renderizarLoja(pagina) {
 
     if (!container) return;
 
+    // Validação da página
     const totalPaginas = Math.ceil(produtosParaExibir.length / itensPorPagina);
     if (pagina < 1) pagina = 1;
     if (pagina > totalPaginas && totalPaginas > 0) pagina = totalPaginas;
@@ -67,23 +74,27 @@ function renderizarLoja(pagina) {
     paginaAtual = pagina;
     container.innerHTML = '';
 
+    // Fatiar
     const inicio = (paginaAtual - 1) * itensPorPagina;
     const fim = inicio + itensPorPagina;
     const produtosDaVez = produtosParaExibir.slice(inicio, fim);
 
     if (produtosDaVez.length === 0) {
-        container.innerHTML = '<div style="padding:40px; text-align:center; width:100%"><h3>Nenhum produto encontrado.</h3></div>';
+        container.innerHTML = '<div style="padding:30px; text-align:center; width:100%"><h3>Nenhum produto encontrado.</h3></div>';
     } else {
         produtosDaVez.forEach(produto => {
+            // Proteção contra aspas no nome
             const nomeSeguro = produto.nome.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-            const imagemSrc = produto.imagem ? produto.imagem : 'img/sem-foto.jpg'; // Ajuste o caminho da imagem padrão se precisar
+            const imagemSrc = produto.imagem ? produto.imagem : 'img/sem-foto.jpg';
 
             container.innerHTML += `
                 <div class="card-produto">
                     <img src="${imagemSrc}" alt="${nomeSeguro}" loading="lazy">
                     <div class="info-produto">
                         <h3>${produto.nome}</h3>
-                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">${produto.categoria || 'Geral'}</p>
+                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">
+                            ${produto.categoria || 'Geral'}
+                        </p>
                         <button onclick="adicionarAoOrcamento('${nomeSeguro}')" class="btn-orcamento">
                             Adicionar ao Orçamento
                         </button>
@@ -100,12 +111,15 @@ function renderizarLoja(pagina) {
 function atualizarBotoesPaginacao(totalPaginas) {
     const container = document.getElementById('paginacao');
     container.innerHTML = '';
+    
     if (totalPaginas <= 1) return;
 
+    // Anterior
     if (paginaAtual > 1) {
         container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual - 1})">&laquo;</button>`;
     }
 
+    // Números (1 ... 4 5 6 ... 10)
     let inicio = Math.max(1, paginaAtual - 2);
     let fim = Math.min(totalPaginas, paginaAtual + 2);
 
@@ -118,6 +132,7 @@ function atualizarBotoesPaginacao(totalPaginas) {
 
     if (fim < totalPaginas) container.innerHTML += `<span>...</span><button class="pagina" onclick="renderizarLoja(${totalPaginas})">${totalPaginas}</button>`;
 
+    // Próximo
     if (paginaAtual < totalPaginas) {
         container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual + 1})">&raquo;</button>`;
     }
@@ -138,9 +153,7 @@ function atualizarVisualCarrinho() {
     const contador = document.getElementById('contador-carrinho');
     
     if (carrinho.length > 0) {
-        btnFloat.style.display = 'flex';
-        btnFloat.style.visibility = 'visible'; // Força bruta visual
-        btnFloat.style.opacity = '1';
+        btnFloat.style.display = 'flex'; 
         if(contador) contador.innerText = carrinho.length;
     } else {
         btnFloat.style.display = 'none';
@@ -153,29 +166,74 @@ function finalizarNoWhatsapp() {
         return;
     }
 
-    const telefone = "5533991781075"; // SEU NÚMERO AQUI
+    const telefone = "5511999999999"; // SEU NÚMERO
     let texto = "*Olá! Gostaria de um orçamento:*\n\n";
-    const contagem = {};
     
-    carrinho.forEach(item => {
-        contagem[item] = (contagem[item] || 0) + 1;
-    });
+    const contagem = {};
+    carrinho.forEach(item => contagem[item] = (contagem[item] || 0) + 1);
 
     for (let item in contagem) {
         texto += `- ${item} (${contagem[item]}x)\n`;
     }
     texto += "\n*Aguardo retorno!*";
 
-    const link = `https://wa.me/${5533991781075}?text=${encodeURIComponent(texto)}`;
+    // 1. Limpa o carrinho
+    carrinho = [];
+    localStorage.removeItem('carrinho_olivi');
+    atualizarVisualCarrinho();
 
-    // LIMPEZA
-    carrinho = []; 
-    localStorage.removeItem('carrinho_olivi'); 
-    localStorage.setItem('carrinho_olivi', '[]'); 
-    atualizarVisualCarrinho(); 
-
-    window.open(link, '_blank');
+    // 2. Abre o zap
+    window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`, '_blank');
 }
 
-/* =================
+/* ==========================================================================
+   6. FILTROS (CATEGORIAS E BUSCA)
+   ========================================================================== */
+function gerarCategorias() {
+    const listaUl = document.getElementById('lista-categorias');
+    if (!listaUl) return;
 
+    const categoriasSet = new Set(listaProdutos.map(p => p.categoria || 'Outros'));
+    const categoriasUnicas = Array.from(categoriasSet).sort();
+
+    listaUl.innerHTML = `<li onclick="filtrarPorCategoria('todas')" class="ativo">Todos os Produtos</li>`;
+
+    categoriasUnicas.forEach(cat => {
+        const qtd = listaProdutos.filter(p => (p.categoria || 'Outros') === cat).length;
+        listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
+    });
+}
+
+function filtrarPorCategoria(categoria) {
+    // 1. Atualiza visual do menu
+    const itens = document.querySelectorAll('#lista-categorias li');
+    itens.forEach(li => {
+        li.classList.remove('ativo');
+        if (li.innerText.includes(categoria) || (categoria === 'todas' && li.innerText.includes('Todos'))) {
+            li.classList.add('ativo');
+        }
+    });
+
+    // 2. Filtra os dados (CORRIGIDO AQUI)
+    if (categoria === 'todas') {
+        produtosParaExibir = listaProdutos;
+    } else {
+        produtosParaExibir = listaProdutos.filter(p => (p.categoria || 'Outros') === categoria);
+    }
+
+    // 3. Renderiza e Fecha menu
+    paginaAtual = 1;
+    renderizarLoja(1);
+    
+    if (window.innerWidth < 800) toggleSidebar();
+}
+
+function pesquisarProdutos() {
+    const termo = document.getElementById('search').value.toLowerCase();
+    produtosParaExibir = listaProdutos.filter(produto => 
+        produto.nome.toLowerCase().includes(termo) || 
+        (produto.categoria && produto.categoria.toLowerCase().includes(termo))
+    );
+    paginaAtual = 1;
+    renderizarLoja(1);
+}
