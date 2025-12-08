@@ -576,7 +576,9 @@ main { padding-top: 30px; }
     }
 }
 
-/* Ajustes do Swiper */
+/* ==========================================================================
+   ESTILOS DO CARROSSEL (SWIPER)
+   ========================================================================== */
 .swiper {
     width: 100%;
     padding-top: 50px;
@@ -586,29 +588,37 @@ main { padding-top: 30px; }
 .swiper-slide {
     background-position: center;
     background-size: cover;
-    width: 300px; /* Tamanho fixo para ficar bonito no PC */
-    height: 350px; /* Altura do card */
-    background: #fff;
-    border-radius: 10px;
+    
+    /* TAMANHO NO PC */
+    width: 200px; 
+    height: 300px;
+    
+    background: #112F52; 
+    border-radius: 15px; /* Bordas arredondadas */
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1); /* Sombra suave */
+    overflow: hidden; /* Garante que a imagem não saia da borda */
 }
 
 .swiper-slide img {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 10px;
+    object-fit: cover; /* A imagem preenche o card sem distorcer */
 }
 
-/* NO CELULAR: Diminuímos o card para caber na tela */
+/* VERSÃO CELULAR (Responsivo) */
 @media (max-width: 800px) {
     .swiper-slide {
-        width: 70%; /* Ocupa 70% da tela do celular */
-        height: 300px;
+        /* No celular, o card ocupa 75% da largura da tela */
+        width: 75%; 
+        height: 350px; /* Um pouco mais baixo */
+    }
+    
+    .swiper {
+        padding-top: 30px;
+        padding-bottom: 30px;
     }
 }
-
