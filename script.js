@@ -1,42 +1,184 @@
 /* ==========================================================================
-   CONFIGURAÇÕES GERAIS
+   1. INICIALIZAÇÃO SEGURA E VARIÁVEIS
    ========================================================================== */
 const itensPorPagina = 12; 
 let paginaAtual = 1;
-// Recupera o carrinho ou cria uma lista vazia
-let carrinho = JSON.parse(localStorage.getItem('carrinho_olivi')) || [];
 let produtosParaExibir = [];
+let carrinho = [];
 
-// INICIALIZAÇÃO
+// Recupera carrinho com segurança
+try {
+    const salvo = localStorage.getItem('carrinho_olivi');
+    carrinho = salvo ? JSON.parse(salvo) : [];
+} catch (e) {
+    carrinho = [];
+}
+
+/* ==========================================================================
+   2. FUNÇÃO MENU MOBILE (A "Mágica" que faz abrir)
+   ========================================================================== */
+function toggleSidebar() {
+    console.log("--> Clicou no botão filtro!"); 
+
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.querySelector('.backdrop-menu');
+    const btn = document.getElementById('btn-abrir-sidebar');
+
+    if (!sidebar) {
+        console.error("Erro: Sidebar não encontrada no HTML");
+        return;
+    }
+
+    // LÓGICA DIRETA: Se não tem estilo definido ou está escondido (-100%), ABRE (0).
+    if (sidebar.style.transform === '' || sidebar.style.transform === 'translateX(-100%)') {
+        // ABRIR
+        sidebar.style.transform = 'translateX(0)';
+        if(backdrop) backdrop.style.display = 'block';
+        if(btn) btn.style.display = 'none'; // Esconde o botão amarelo pra não atrapalhar
+    } else {
+        // FECHAR
+        sidebar.style.transform = 'translateX(-100%)';
+        if(backdrop) backdrop.style.display = 'none';
+        if(btn) btn.style.display = 'flex'; // Volta o botão amarelo
+    }
+}
+
+/* ==========================================================================
+   3. CARREGAMENTO
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
-    // Carrega produtos se a variável existir
+    // Verifica se produtos.js carregou
     if (typeof listaProdutos !== 'undefined') {
         produtosParaExibir = listaProdutos;
-        if(typeof gerarCategorias === 'function') gerarCategorias();
+        gerarCategorias();
         renderizarLoja(paginaAtual);
     } else {
-        console.error("ERRO CRÍTICO: listaProdutos não encontrada. Verifique o arquivo produtos.js");
+        console.error("ERRO: listaProdutos não definida.");
     }
     
-    // Atualiza o botão do carrinho (se já tiver itens salvos de antes)
     atualizarVisualCarrinho();
 });
 
 /* ==========================================================================
-   MENU MOBILE / FILTROS (SIMPLIFICADO)
+   4. RENDERIZAÇÃO DA LOJA
    ========================================================================== */
-function toggleSidebar() {
-    console.log("Botão de filtro clicado!"); // Para teste
-    const body = document.querySelector('.body2');
+function renderizarLoja(pagina) {
+    const container = document.getElementById('grade-produtos');
+    const containerPaginacao = document.getElementById('paginacao');
+
+    if (!container) return;
+
+    const totalPaginas = Math.ceil(produtosParaExibir.length / itensPorPagina);
+    if (pagina < 1) pagina = 1;
+    if (pagina > totalPaginas && totalPaginas > 0) pagina = totalPaginas;
     
-    // Troca a classe no body
-    body.classList.toggle('mobile-menu-aberto');
-    
-    // No PC, também usa a lógica de sidebar fechada
-    body.classList.toggle('sidebar-fechada');
+    paginaAtual = pagina;
+    container.innerHTML = '';
+
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+    const produtosDaVez = produtosParaExibir.slice(inicio, fim);
+
+    if (produtosDaVez.length === 0) {
+        container.innerHTML = '<div style="padding:40px; text-align:center; width:100%"><h3>Nenhum produto encontrado.</h3></div>';
+    } else {
+        produtosDaVez.forEach(produto => {
+            const nomeSeguro = produto.nome.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+            // Ajuste o caminho da imagem se necessário
+            const imagemSrc = produto.imagem ? produto.imagem : 'img/sem-foto.jpg';
+
+            container.innerHTML += `
+                <div class="card-produto">
+                    <img src="${imagemSrc}" alt="${nomeSeguro}" loading="lazy">
+                    <div class="info-produto">
+                        <h3>${produto.nome}</h3>
+                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">${produto.categoria || 'Geral'}</p>
+                        <button onclick="adicionarAoOrcamento('${nomeSeguro}')" class="btn-orcamento">
+                            Adicionar ao Orçamento
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    if(containerPaginacao) atualizarBotoesPaginacao(totalPaginas);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Lógica de Filtros
+function atualizarBotoesPaginacao(totalPaginas) {
+    const container = document.getElementById('paginacao');
+    container.innerHTML = '';
+    if (totalPaginas <= 1) return;
+
+    if (paginaAtual > 1) container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual - 1})">&laquo;</button>`;
+
+    let inicio = Math.max(1, paginaAtual - 2);
+    let fim = Math.min(totalPaginas, paginaAtual + 2);
+
+    if (inicio > 1) container.innerHTML += `<button class="pagina" onclick="renderizarLoja(1)">1</button><span>...</span>`;
+    for (let i = inicio; i <= fim; i++) {
+        const ativo = i === paginaAtual ? 'ativa' : '';
+        container.innerHTML += `<button class="pagina ${ativo}" onclick="renderizarLoja(${i})">${i}</button>`;
+    }
+    if (fim < totalPaginas) container.innerHTML += `<span>...</span><button class="pagina" onclick="renderizarLoja(${totalPaginas})">${totalPaginas}</button>`;
+
+    if (paginaAtual < totalPaginas) container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual + 1})">&raquo;</button>`;
+}
+
+/* ==========================================================================
+   5. CARRINHO E ZAP
+   ========================================================================== */
+function adicionarAoOrcamento(nome) {
+    carrinho.push(nome);
+    localStorage.setItem('carrinho_olivi', JSON.stringify(carrinho));
+    alert(`✅ "${nome}" adicionado!`);
+    atualizarVisualCarrinho();
+}
+
+function atualizarVisualCarrinho() {
+    const btnFloat = document.querySelector('.carrinho-flutuante');
+    const contador = document.getElementById('contador-carrinho');
+    
+    if (carrinho.length > 0) {
+        btnFloat.style.display = 'flex';
+        btnFloat.style.visibility = 'visible';
+        btnFloat.style.opacity = '1';
+        if(contador) contador.innerText = carrinho.length;
+    } else {
+        btnFloat.style.display = 'none';
+    }
+}
+
+function finalizarNoWhatsapp() {
+    if (carrinho.length === 0) {
+        alert("Seu carrinho está vazio!");
+        return;
+    }
+
+    const telefone = "5511999999999"; // SEU NÚMERO
+    let texto = "*Olá! Gostaria de um orçamento:*\n\n";
+    const contagem = {};
+    
+    carrinho.forEach(item => contagem[item] = (contagem[item] || 0) + 1);
+
+    for (let item in contagem) {
+        texto += `- ${item} (${contagem[item]}x)\n`;
+    }
+    texto += "\n*Aguardo retorno!*";
+
+    // 1. LIMPA TUDO
+    carrinho = [];
+    localStorage.removeItem('carrinho_olivi');
+    atualizarVisualCarrinho();
+
+    // 2. ENVIA
+    window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`, '_blank');
+}
+
+/* ==========================================================================
+   6. CATEGORIAS E BUSCA
+   ========================================================================== */
 function gerarCategorias() {
     const listaUl = document.getElementById('lista-categorias');
     if (!listaUl) return;
@@ -69,167 +211,25 @@ function filtrarPorCategoria(categoria) {
 
     paginaAtual = 1;
     renderizarLoja(1);
-
-    // Fecha o menu automaticamente no celular ao clicar em uma categoria
-    if (window.innerWidth < 800) {
-        const body = document.querySelector('.body2');
-        body.classList.remove('mobile-menu-aberto');
-    }
-}
-
-/* ==========================================================================
-   LÓGICA DA LOJA (Mostrar Produtos)
-   ========================================================================== */
-function renderizarLoja(pagina) {
-    const container = document.getElementById('grade-produtos');
-    const containerPaginacao = document.getElementById('paginacao');
-
-    if (!container) return;
-
-    // Garante que a página é válida
-    const totalPaginas = Math.ceil(produtosParaExibir.length / itensPorPagina);
-    if (pagina < 1) pagina = 1;
-    if (pagina > totalPaginas && totalPaginas > 0) pagina = totalPaginas;
     
-    paginaAtual = pagina;
-    container.innerHTML = ''; // Limpa tela
+    // Fecha o menu se estiver no celular
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.querySelector('.backdrop-menu');
+    const btn = document.getElementById('btn-abrir-sidebar');
 
-    // Fatia os produtos
-    const inicio = (paginaAtual - 1) * itensPorPagina;
-    const fim = inicio + itensPorPagina;
-    const produtosDaVez = produtosParaExibir.slice(inicio, fim);
-
-    if (produtosDaVez.length === 0) {
-        container.innerHTML = '<div style="padding:40px; text-align:center; width:100%"><h3>Nenhum produto encontrado.</h3></div>';
-    } else {
-        produtosDaVez.forEach(produto => {
-            const nomeSeguro = produto.nome.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-            // Fallback para imagem
-            const imagemSrc = produto.imagem ? produto.imagem : 'img/sem-foto.jpg';
-
-            container.innerHTML += `
-                <div class="card-produto">
-                    <img src="${imagemSrc}" alt="${nomeSeguro}" loading="lazy">
-                    <div class="info-produto">
-                        <h3>${produto.nome}</h3>
-                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">${produto.categoria || 'Geral'}</p>
-                        <button onclick="adicionarAoOrcamento('${nomeSeguro}')" class="btn-orcamento">
-                            Adicionar ao Orçamento
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    if(containerPaginacao) atualizarBotoesPaginacao(totalPaginas);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function atualizarBotoesPaginacao(totalPaginas) {
-    const container = document.getElementById('paginacao');
-    container.innerHTML = '';
-    if (totalPaginas <= 1) return;
-
-    // Botão Anterior
-    if (paginaAtual > 1) {
-        container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual - 1})">&laquo;</button>`;
-    }
-
-    // Números inteligentes
-    let inicio = Math.max(1, paginaAtual - 2);
-    let fim = Math.min(totalPaginas, paginaAtual + 2);
-
-    if (inicio > 1) container.innerHTML += `<button class="pagina" onclick="renderizarLoja(1)">1</button><span>...</span>`;
-    
-    for (let i = inicio; i <= fim; i++) {
-        const ativo = i === paginaAtual ? 'ativa' : '';
-        container.innerHTML += `<button class="pagina ${ativo}" onclick="renderizarLoja(${i})">${i}</button>`;
-    }
-
-    if (fim < totalPaginas) container.innerHTML += `<span>...</span><button class="pagina" onclick="renderizarLoja(${totalPaginas})">${totalPaginas}</button>`;
-
-    // Botão Próximo
-    if (paginaAtual < totalPaginas) {
-        container.innerHTML += `<button class="seta" onclick="renderizarLoja(${paginaAtual + 1})">&raquo;</button>`;
+    if (window.innerWidth < 800 && sidebar) {
+        sidebar.style.transform = 'translateX(-100%)';
+        if(backdrop) backdrop.style.display = 'none';
+        if(btn) btn.style.display = 'flex';
     }
 }
 
-
-/* ==========================================================================
-   CARRINHO E WHATSAPP (CORRIGIDO)
-   ========================================================================== */
-function adicionarAoOrcamento(nome) {
-    carrinho.push(nome);
-    localStorage.setItem('carrinho_olivi', JSON.stringify(carrinho));
-    alert(`✅ "${nome}" adicionado!`);
-    atualizarVisualCarrinho();
-}
-
-function atualizarVisualCarrinho() {
-    const btnFloat = document.querySelector('.carrinho-flutuante');
-    const contador = document.getElementById('contador-carrinho');
-    
-    if (carrinho.length > 0) {
-        // Remove display:none e força aparecer
-        btnFloat.style.display = 'flex';
-        // Força visibilidade caso o CSS esteja escondendo
-        btnFloat.style.visibility = 'visible'; 
-        btnFloat.style.opacity = '1';
-        
-        if(contador) contador.innerText = carrinho.length;
-    } else {
-        btnFloat.style.display = 'none';
-    }
-}
-
-function finalizarNoWhatsapp() {
-    if (carrinho.length === 0) {
-        alert("Seu carrinho está vazio!");
-        return;
-    }
-
-    // --- SEU NÚMERO ---
-    const telefone = "5511999999999"; 
-    // ------------------
-
-    let texto = "*Olá! Gostaria de um orçamento:*\n\n";
-    const contagem = {};
-    
-    // Conta itens repetidos
-    carrinho.forEach(item => {
-        contagem[item] = (contagem[item] || 0) + 1;
-    });
-
-    for (let item in contagem) {
-        texto += `- ${item} (${contagem[item]}x)\n`;
-    }
-    texto += "\n*Aguardo retorno!*";
-
-    const link = `https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`;
-
-    // 1. ZERA TUDO ANTES DE ABRIR (Para garantir)
-    carrinho = []; // Zera a memória RAM
-    localStorage.removeItem('carrinho_olivi'); // Zera o HD do navegador
-    localStorage.setItem('carrinho_olivi', '[]'); // Força vazio
-    atualizarVisualCarrinho(); // Atualiza o botão (ele vai sumir)
-
-    // 2. Abre o WhatsApp
-    window.open(link, '_blank');
-}
-
-
-
-// Pesquisa
 function pesquisarProdutos() {
     const termo = document.getElementById('search').value.toLowerCase();
-    
     produtosParaExibir = listaProdutos.filter(produto => 
         produto.nome.toLowerCase().includes(termo) || 
         (produto.categoria && produto.categoria.toLowerCase().includes(termo))
     );
-
     paginaAtual = 1;
     renderizarLoja(1);
 }
-
