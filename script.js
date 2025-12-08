@@ -121,7 +121,7 @@ function finalizarNoWhatsapp() {
     }
 
     // --- SEU NÚMERO AQUI ---
-    const telefone = "5511999999999"; 
+    const telefone = "5533991781075"; 
     // -----------------------
 
     let texto = "*Olá! Gostaria de um orçamento:*\n\n";
@@ -201,3 +201,4 @@ function gerarCategorias() {
         listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
     });
 }
+
