@@ -1,11 +1,42 @@
 /* ==========================================================================
-   CONFIGURAÇÕES E INICIALIZAÇÃO
+   1. VARIÁVEIS GLOBAIS (O navegador lê isso primeiro)
    ========================================================================== */
 const itensPorPagina = 12; 
 let paginaAtual = 1;
 let carrinho = JSON.parse(localStorage.getItem('carrinho_olivi')) || [];
 let produtosParaExibir = [];
 
+/* ==========================================================================
+   2. FUNÇÃO DE MENU MOBILE (TOGGLE SIDEBAR)
+   Colocamos aqui no topo para garantir que o HTML enxergue ela
+   ========================================================================== */
+function toggleSidebar() {
+    console.log("--> Função toggleSidebar foi chamada!"); // Teste de clique
+
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.querySelector('.backdrop-menu');
+    const btn = document.getElementById('btn-abrir-sidebar');
+
+    if (!sidebar) {
+        console.error("ERRO: Não achei o elemento #sidebar");
+        return;
+    }
+
+    // Verifica se está fechada (ou sem estilo definido) e ABRE
+    if (sidebar.style.transform === '' || sidebar.style.transform === 'translateX(-100%)') {
+        sidebar.style.transform = 'translateX(0)'; // Abre
+        if (backdrop) backdrop.style.display = 'block';
+        if (btn) btn.style.display = 'none'; // Esconde botão
+    } else {
+        sidebar.style.transform = 'translateX(-100%)'; // Fecha
+        if (backdrop) backdrop.style.display = 'none';
+        if (btn) btn.style.display = 'flex'; // Mostra botão
+    }
+}
+
+/* ==========================================================================
+   3. INICIALIZAÇÃO (Só roda quando a tela termina de carregar)
+   ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     // Carrega produtos
     if (typeof listaProdutos !== 'undefined') {
@@ -13,15 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if(typeof gerarCategorias === 'function') gerarCategorias();
         renderizarLoja(paginaAtual);
     } else {
-        console.error("ERRO: O arquivo produtos.js não carregou.");
+        console.error("ERRO CRÍTICO: listaProdutos não encontrada.");
     }
     
-    // Atualiza o carrinho visualmente
+    // Atualiza o carrinho
     atualizarVisualCarrinho();
 });
 
 /* ==========================================================================
-   LÓGICA DA LOJA
+   4. FUNÇÕES DA LOJA E RENDERIZAÇÃO
    ========================================================================== */
 function renderizarLoja(pagina) {
     const container = document.getElementById('grade-produtos');
@@ -41,18 +72,18 @@ function renderizarLoja(pagina) {
     const produtosDaVez = produtosParaExibir.slice(inicio, fim);
 
     if (produtosDaVez.length === 0) {
-        container.innerHTML = '<p style="padding:20px; text-align:center;">Nenhum produto encontrado.</p>';
+        container.innerHTML = '<div style="padding:40px; text-align:center; width:100%"><h3>Nenhum produto encontrado.</h3></div>';
     } else {
         produtosDaVez.forEach(produto => {
             const nomeSeguro = produto.nome.replace(/"/g, '&quot;').replace(/'/g, "\\'");
-            const imagemSrc = produto.imagem ? produto.imagem : 'https://via.placeholder.com/300x300?text=Sem+Foto';
+            const imagemSrc = produto.imagem ? produto.imagem : 'img/sem-foto.jpg'; // Ajuste o caminho da imagem padrão se precisar
 
             container.innerHTML += `
                 <div class="card-produto">
                     <img src="${imagemSrc}" alt="${nomeSeguro}" loading="lazy">
                     <div class="info-produto">
                         <h3>${produto.nome}</h3>
-                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">${produto.categoria || ''}</p>
+                        <p class="categoria-tag" style="color:#888; font-size:0.8rem; margin-bottom:5px;">${produto.categoria || 'Geral'}</p>
                         <button onclick="adicionarAoOrcamento('${nomeSeguro}')" class="btn-orcamento">
                             Adicionar ao Orçamento
                         </button>
@@ -79,10 +110,12 @@ function atualizarBotoesPaginacao(totalPaginas) {
     let fim = Math.min(totalPaginas, paginaAtual + 2);
 
     if (inicio > 1) container.innerHTML += `<button class="pagina" onclick="renderizarLoja(1)">1</button><span>...</span>`;
+    
     for (let i = inicio; i <= fim; i++) {
         const ativo = i === paginaAtual ? 'ativa' : '';
         container.innerHTML += `<button class="pagina ${ativo}" onclick="renderizarLoja(${i})">${i}</button>`;
     }
+
     if (fim < totalPaginas) container.innerHTML += `<span>...</span><button class="pagina" onclick="renderizarLoja(${totalPaginas})">${totalPaginas}</button>`;
 
     if (paginaAtual < totalPaginas) {
@@ -91,7 +124,7 @@ function atualizarBotoesPaginacao(totalPaginas) {
 }
 
 /* ==========================================================================
-   LÓGICA DO CARRINHO (WHATSAPP) - CORRIGIDA
+   5. CARRINHO E WHATSAPP
    ========================================================================== */
 function adicionarAoOrcamento(nome) {
     carrinho.push(nome);
@@ -104,10 +137,10 @@ function atualizarVisualCarrinho() {
     const btnFloat = document.querySelector('.carrinho-flutuante');
     const contador = document.getElementById('contador-carrinho');
     
-    // Só mexe no display se for PC. No mobile o CSS controla com !important.
-    // Mas garantimos que se tiver vazio, some pra todo mundo.
     if (carrinho.length > 0) {
         btnFloat.style.display = 'flex';
+        btnFloat.style.visibility = 'visible'; // Força bruta visual
+        btnFloat.style.opacity = '1';
         if(contador) contador.innerText = carrinho.length;
     } else {
         btnFloat.style.display = 'none';
@@ -120,84 +153,28 @@ function finalizarNoWhatsapp() {
         return;
     }
 
-    // --- SEU NÚMERO AQUI ---
-    const telefone = "5533991781075"; 
-    // -----------------------
-
+    const telefone = "5511999999999"; // SEU NÚMERO AQUI
     let texto = "*Olá! Gostaria de um orçamento:*\n\n";
     const contagem = {};
-    carrinho.forEach(item => contagem[item] = (contagem[item] || 0) + 1);
+    
+    carrinho.forEach(item => {
+        contagem[item] = (contagem[item] || 0) + 1;
+    });
 
     for (let item in contagem) {
         texto += `- ${item} (${contagem[item]}x)\n`;
     }
     texto += "\n*Aguardo retorno!*";
 
-    const link = `https://wa.me/${5533991781075}?text=${encodeURIComponent(texto)}`;
-    
-    // 1. Abre o WhatsApp
-    window.open(link, '_blank');
+    const link = `https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`;
 
-    // 2. LIMPA O CARRINHO (A CORREÇÃO ESTÁ AQUI)
+    // LIMPEZA
     carrinho = []; 
-    localStorage.removeItem('carrinho_olivi'); // Limpa a memória
-    atualizarVisualCarrinho(); // Atualiza o botão verde (vai sumir)
+    localStorage.removeItem('carrinho_olivi'); 
+    localStorage.setItem('carrinho_olivi', '[]'); 
+    atualizarVisualCarrinho(); 
+
+    window.open(link, '_blank');
 }
 
-/* ==========================================================================
-   LÓGICA DO MENU / SIDEBAR (CORRIGIDA E SIMPLIFICADA)
-   ========================================================================== */
-function toggleSidebar() {
-    // SELETORES DIRETOS
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.querySelector('.backdrop-menu');
-    const btn = document.getElementById('btn-abrir-sidebar');
-
-    // 1. CHECAGEM DE SEGURANÇA
-    if (!sidebar) {
-        console.error("Erro: Sidebar não encontrada!");
-        return;
-    }
-
-    // 2. LÓGICA DE ABRIR/FECHAR (Direto no estilo, sem depender de classes do body)
-    // Se a barra estiver escondida (ou não tiver estilo definido ainda)...
-    if (sidebar.style.transform === '' || sidebar.style.transform === 'translateX(-100%)') {
-        
-        // ABRIR
-        sidebar.style.transform = 'translateX(0)';
-        if (backdrop) backdrop.style.display = 'block';
-        if (btn) btn.style.display = 'none'; // Esconde o botão pra não ficar em cima
-        
-    } else {
-        
-        // FECHAR
-        sidebar.style.transform = 'translateX(-100%)';
-        if (backdrop) backdrop.style.display = 'none';
-        if (btn) btn.style.display = 'flex'; // Mostra o botão de volta
-    }
-}
-
-function pesquisarProdutos() {
-    const termo = document.getElementById('search').value.toLowerCase();
-    produtosParaExibir = listaProdutos.filter(produto => 
-        produto.nome.toLowerCase().includes(termo) || 
-        (produto.categoria && produto.categoria.toLowerCase().includes(termo))
-    );
-    paginaAtual = 1;
-    renderizarLoja(1);
-}
-
-function gerarCategorias() {
-    const listaUl = document.getElementById('lista-categorias');
-    if (!listaUl) return;
-    const categoriasSet = new Set(listaProdutos.map(p => p.categoria || 'Outros'));
-    const categoriasUnicas = Array.from(categoriasSet).sort();
-    listaUl.innerHTML = `<li onclick="filtrarPorCategoria('todas')" class="ativo">Todos os Produtos</li>`;
-    categoriasUnicas.forEach(cat => {
-        const qtd = listaProdutos.filter(p => (p.categoria || 'Outros') === cat).length;
-        listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
-    });
-}
-
-
-
+/* =================
