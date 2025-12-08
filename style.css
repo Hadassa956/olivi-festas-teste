@@ -226,7 +226,7 @@ footer {
 /* --- NAV BAR DA LOJA --- */
 .nav2 {
     grid-area: navbar;
-    background-color: #0a1c33;
+    background-color: #1e2f39;
     height: 70px;
     padding: 0 20px;
     position: sticky;
@@ -575,3 +575,4 @@ main { padding-top: 30px; }
         pointer-events: none;
     }
 }
+
