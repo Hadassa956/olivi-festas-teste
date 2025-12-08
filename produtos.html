@@ -6,39 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Olivi Festas</title>
 
-    <link rel="stylesheet" href="style.css?v=2">
-    <script type="text/javascript" src="app.js" defer></script>
+    <link rel="stylesheet" href="style.css?v=3">
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="https://www.flaticon.com/free-icons/furniture">
     <link rel="stylesheet " href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
-        rel="stylesheet" href="style.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 
 <body class="body2">
     <nav class="nav2">
         <div class="logo-produtos">
-            <a href="index.html"><img class="logo-img" src="271369607_498787434890618_1940073867139869640_n~2.jpg" alt=""></a>
+            <a href="index.html"><img class="logo-img" src="img/logo-olivi.jpeg" alt="Logo"></a>
         </div>
         <div class="search-box">
             <i class="ri-search-line"></i>
             <input type="search" id="search" placeholder="O que você procura?" onkeyup="pesquisarProdutos()">
         </div>
     </nav>
+    
     <aside id="sidebar">
         <div class="sidebar-header">
             <h3 class="cat">Filtrar por:</h3>
             <button id="btn-toggle-sidebar" onclick="toggleSidebar()">
-                &laquo; </button>
+                &laquo; 
+            </button>
         </div>
 
         <div class="menu-categorias">
             <ul id="lista-categorias">
-            </ul>
+                </ul>
         </div>
     </aside>
 
@@ -46,14 +45,10 @@
         Filtros &raquo;
     </button>
 
-
     <main class="secao-produtos">
         <div id="grade-produtos" class="container-grade"></div>
-
         <div id="paginacao" class="paginacao-bottom"></div>
     </main>
-
-
 
     <div class="carrinho-flutuante" onclick="finalizarNoWhatsapp()" style="display:none">
         <i class="ri-whatsapp-line"></i>
@@ -65,16 +60,15 @@
             <p>&copy; 2025 Olivi Festas. Todos os direitos reservados.</p>
             <div class="socials">
                 <a href="https://www.instagram.com/olivifestas/" target="_blank"><i class="ri-instagram-line"></i></a>
-                <a href="https://www.facebook.com/olivifestas" target="_blank"><i
-                        class="ri-facebook-circle-line"></i></a>
-                <a href="https://api.whatsapp.com/message/JTKKMGS5UGLRF1?autoload=1&app_absent=0&utm_source=ig"
-                    target="_blank"><i class="ri-whatsapp-line"></i></a>
+                <a href="https://www.facebook.com/olivifestas" target="_blank"><i class="ri-facebook-circle-line"></i></a>
+                <a href="#" target="_blank"><i class="ri-whatsapp-line"></i></a>
             </div>
         </div>
     </footer>
+
     <div class="backdrop-menu" onclick="toggleSidebar()"></div>
-    <script src="produtos.js?v=2"></script>
-    <script src="script.js?v=2"></script>
 
+    <script src="produtos.js?v=3"></script>
+    <script src="script.js?v=3"></script>
 </body>
-
+</html>
