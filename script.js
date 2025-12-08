@@ -160,7 +160,7 @@ function finalizarNoWhatsapp() {
     }
 
     // --- CONFIGURE SEU NÚMERO AQUI (Apenas números, código país + ddd + numero) ---
-    const telefone = "5511999999999";
+    const telefone = "5533991781075";
     // -----------------------------------------------------------------------------
 
     let texto = "*Olá! Gostaria de um orçamento para os seguintes itens:*\n\n";
@@ -260,4 +260,5 @@ function toggleSidebar() {
         // No PC
         body.classList.toggle('sidebar-fechada');
     }
+
 }
