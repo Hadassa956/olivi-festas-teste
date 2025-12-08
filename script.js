@@ -156,7 +156,7 @@ function finalizarNoWhatsapp() {
         return;
     }
 
-    const telefone = "5511999999999"; // SEU NÚMERO
+    const telefone = "5533988569219"; // SEU NÚMERO
     let texto = "*Olá! Gostaria de um orçamento:*\n\n";
     const contagem = {};
     
@@ -173,7 +173,7 @@ function finalizarNoWhatsapp() {
     atualizarVisualCarrinho();
 
     // 2. ENVIA
-    window.open(`https://wa.me/${telefone}?text=${encodeURIComponent(texto)}`, '_blank');
+    window.open(`https://wa.me/${5533988569219}?text=${encodeURIComponent(texto)}`, '_blank');
 }
 
 /* ==========================================================================
@@ -233,3 +233,4 @@ function pesquisarProdutos() {
     paginaAtual = 1;
     renderizarLoja(1);
 }
+
