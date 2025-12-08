@@ -605,9 +605,10 @@ main { padding-top: 30px; }
 }
 
 /* NO CELULAR: Diminuímos o card para caber na tela */
-@media (max-width: 768px) {
+@media (max-width: 800px) {
     .swiper-slide {
         width: 70%; /* Ocupa 70% da tela do celular */
         height: 300px;
     }
 }
+
