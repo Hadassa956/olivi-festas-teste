@@ -576,3 +576,38 @@ main { padding-top: 30px; }
     }
 }
 
+/* Ajustes do Swiper */
+.swiper {
+    width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 300px; /* Tamanho fixo para ficar bonito no PC */
+    height: 350px; /* Altura do card */
+    background: #fff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* NO CELULAR: Diminuímos o card para caber na tela */
+@media (max-width: 768px) {
+    .swiper-slide {
+        width: 70%; /* Ocupa 70% da tela do celular */
+        height: 300px;
+    }
+}
