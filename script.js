@@ -148,35 +148,32 @@ function finalizarNoWhatsapp() {
    LÓGICA DO MENU / SIDEBAR (CORRIGIDA E SIMPLIFICADA)
    ========================================================================== */
 function toggleSidebar() {
-    const body = document.querySelector('.body2');
-    
-    // Simplesmente liga/desliga a classe. O CSS cuida do resto.
-    body.classList.toggle('mobile-menu-aberto');
-    body.classList.toggle('sidebar-fechada'); // Mantém compatibilidade com PC
-}
+    // SELETORES DIRETOS
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.querySelector('.backdrop-menu');
+    const btn = document.getElementById('btn-abrir-sidebar');
 
-function filtrarPorCategoria(categoria) {
-    const itens = document.querySelectorAll('#lista-categorias li');
-    itens.forEach(li => {
-        li.classList.remove('ativo');
-        if (li.innerText.includes(categoria) || (categoria === 'todas' && li.innerText.includes('Todos'))) {
-            li.classList.add('ativo');
-        }
-    });
-
-    if (categoria === 'todas') {
-        produtosParaExibir = listaProdutos;
-    } else {
-        produtosParaExibir = listaProdutos.filter(p => (p.categoria || 'Outros') === cat);
+    // 1. CHECAGEM DE SEGURANÇA
+    if (!sidebar) {
+        console.error("Erro: Sidebar não encontrada!");
+        return;
     }
-    
-    paginaAtual = 1;
-    renderizarLoja(1);
-    
-    // Fecha o menu se estiver no celular
-    const body = document.querySelector('.body2');
-    if (window.innerWidth < 800) {
-        body.classList.remove('mobile-menu-aberto');
+
+    // 2. LÓGICA DE ABRIR/FECHAR (Direto no estilo, sem depender de classes do body)
+    // Se a barra estiver escondida (ou não tiver estilo definido ainda)...
+    if (sidebar.style.transform === '' || sidebar.style.transform === 'translateX(-100%)') {
+        
+        // ABRIR
+        sidebar.style.transform = 'translateX(0)';
+        if (backdrop) backdrop.style.display = 'block';
+        if (btn) btn.style.display = 'none'; // Esconde o botão pra não ficar em cima
+        
+    } else {
+        
+        // FECHAR
+        sidebar.style.transform = 'translateX(-100%)';
+        if (backdrop) backdrop.style.display = 'none';
+        if (btn) btn.style.display = 'flex'; // Mostra o botão de volta
     }
 }
 
@@ -201,5 +198,6 @@ function gerarCategorias() {
         listaUl.innerHTML += `<li onclick="filtrarPorCategoria('${cat}')">${cat} <small>(${qtd})</small></li>`;
     });
 }
+
 
 
