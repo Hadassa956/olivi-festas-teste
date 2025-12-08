@@ -593,8 +593,8 @@ main { padding-top: 30px; }
     background-color: #1b1f2a;
     border: .2rem solid rgba(255,255,255,.1);
     border-radius: .7rem;
-    border-bottom: .4rem #D9B00E;
-    border-top: .4rem #D9B00E;
+    border-bottom: .4rem solid #D9B00E;
+    border-top: .4rem solid #D9B00E;
     overflow: hidden;
     padding: .2rem;
 }
@@ -604,4 +604,5 @@ main { padding-top: 30px; }
     border-bottom-left-radius: .6rem;
     border-bottom-right-radius: .6rem;
 }
+
 
