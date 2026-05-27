@@ -1,4 +1,4 @@
-Este READ ME é referente a um projeto de extensão cujo o objetivo era criar uma página de apresentação da loja 
-com direcionamento para orçamento que puxe API do Whatsapp para que o cliente escolha os itens e envie para o whatsapp da loja.
--Site Estático
-Ferramentas usadas: HTML, CSS, JavaScript
+Este projeto é referente a um projeto de extensão universitário cujo o objetivo era criar um website isntitucional de uma loja de aluguel de itens de festa.
+Neste projeto as ferramentas usadas foram HTML, CSS, JavaScript. O site é estático, obtém os produtos catalogados e possui redirecionamento para o whatsapp usando a API do Whatsapp para que o cliente escolha os itens e envie para o whatsapp da loja.
+
+
